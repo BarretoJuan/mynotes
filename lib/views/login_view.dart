@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialogs.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -60,23 +60,38 @@ class _LoginViewState extends State<LoginView> {
                     email: email,
                     password: password,
                   );
-                  if (mounted) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      notesRoute,
-                      (route) => false,
-                    );
-                  }
+                  if (!mounted) return;
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notesRoute,
+                    (route) => false,
+                  );
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
-                    devtools.log("User not Found");
+                    await showErrorDialog(
+                      context,
+                      "User not found",
+                    );
                   } else if (e.code == 'wrong-password') {
-                    devtools.log("Incorrect Password or Email");
+                    await showErrorDialog(
+                      context,
+                      "Incorrect username and/or password",
+                    );
                   } else if (e.code == 'too-many-requests') {
-                    devtools.log('Too many requests');
+                    await showErrorDialog(
+                      context,
+                      "Too many request, please try again",
+                    );
                   } else {
-                    devtools.log(e.code.toString());
-                    devtools.log("Unknown Error");
+                    await showErrorDialog(
+                      context,
+                      "Error: ${e.toString}",
+                    );
                   }
+                } catch (e) {
+                  await showErrorDialog(
+                    context,
+                    "Error: ${e.toString()}",
+                  );
                 }
               },
               child: const Text("Login")),
