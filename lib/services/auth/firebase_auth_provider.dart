@@ -1,4 +1,4 @@
- import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:mynotes/firebase_options.dart';
 
 import 'auth_provider.dart';
@@ -55,6 +55,7 @@ class FirebaseAuthProvider implements AuthProvider {
     required String password,
   }) async {
     try {
+      await Future.delayed(const Duration(seconds: 5));
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
