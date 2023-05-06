@@ -23,6 +23,7 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch:
             createMaterialColor(const Color.fromARGB(255, 140, 12, 12)),
