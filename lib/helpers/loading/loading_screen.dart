@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'loading_screen_controller.dart';
 
 class LoadingScreen {
+  factory LoadingScreen() => _shared;
   static final LoadingScreen _shared = LoadingScreen._sharedInstance();
   LoadingScreen._sharedInstance();
-  factory LoadingScreen() => _shared;
 
   LoadingScreenController? controller;
 
@@ -45,14 +45,14 @@ class LoadingScreen {
     final overlay = OverlayEntry(
       builder: (context) {
         return Material(
-          color: Colors.black.withAlpha(130),
+          color: Colors.black.withAlpha(150),
           child: Center(
             child: Container(
               constraints: BoxConstraints(
-                  maxWidth: size.width * 0.8,
-                  maxHeight: size.height * 0.8,
-                  minWidth: size.width * 0.5,
-                  minHeight: size.height * 0.5),
+                maxWidth: size.width * 0.8,
+                maxHeight: size.height * 0.8,
+                minWidth: size.width * 0.5,
+              ),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10.0)),

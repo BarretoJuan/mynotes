@@ -8,9 +8,44 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider)
       : super(const AuthStateUnitilialized(isLoading: true)) {
+    //forgot password
+    on<AuthEventForgotPassword>((event, emit) async {
+      emit(AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: false,
+      ));
+      final email = event.email;
+      if (email == null) {
+        return; //user just wants to go to forgot password screen
+      }
+      emit(AuthStateForgotPassword(
+        exception: null,
+        hasSentEmail: false,
+        isLoading: true,
+      ));
+      bool didSendEmail;
+      Exception? exception;
+      try {
+        await provider.sendPasswordReset(toEmail: email);
+        didSendEmail = true;
+        exception = null; //user wants to actually send a forgot password email
+      } on Exception catch (e) {
+        didSendEmail = false;
+        exception = e;
+      }
+      emit(AuthStateForgotPassword(
+        exception: exception,
+        hasSentEmail: didSendEmail,
+        isLoading: false,
+      ));
+    });
     //Should Register
     on<AuthEventShouldRegister>((event, emit) {
-      emit(const AuthStateRegistering(exception: null, isLoading: false));
+      emit(const AuthStateRegistering(
+        exception: null,
+        isLoading: false,
+      ));
     });
 //verify email
     on<AuthEventSendEmailVerification>((event, emit) async {
@@ -30,7 +65,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await provider.sendEmailVerification();
           emit(const AuthStateNeedsVerification(isLoading: false));
         } on Exception catch (e) {
-          emit(AuthStateRegistering(exception: e, isLoading: false));
+          emit(AuthStateRegistering(
+            exception: e,
+            isLoading: false,
+          ));
         }
       },
     );
@@ -58,11 +96,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
     //log in
     on<AuthEventLogIn>((event, emit) async {
-      emit(const AuthStateLoggedOut(
-        exception: null,
-        isLoading: true,
-        loadingText: "Please wait while I log you in",
-      ));
+      emit(
+        const AuthStateLoggedOut(
+          exception: null,
+          isLoading: true,
+          loadingText: "Please wait while I log you in",
+        ),
+      );
       final email = event.email;
       final password = event.password;
       try {
